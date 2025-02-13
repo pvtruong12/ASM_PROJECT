@@ -11,6 +11,7 @@ public class LoadMapScr : MonoBehaviour
     }
     private void Awake()
     {
+        Debug.Log("Created LoadMap");
         if (instance == null)
         {
             instance = this;

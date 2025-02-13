@@ -1,22 +1,31 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class MainChar : MonoBehaviour
 {
     public float moveSpeed = 2f;
     public static MainChar instance;
-    public static string[] listLevel = new string[] { "Menu", "Level_1", "Level_2", "Level_3" };
+    public static string[] listLevel = new string[] { "LoginScr", "CreatChar","Level_1", "Level_2", "Level_3" };
     public int currentLevel = 1;
     public Rigidbody2D rb;
     private SpriteRenderer sr;
     private Animator amn;
-    public float jumpForce = 10f; 
+    [SerializeField] private float jumpForce = 10f; 
+    public float bulletSpeed = 10f; 
     public int jumpCount = 0;
     public bool isDie = false;
     private bool isGrounded;
     public bool isLadder;
+    public long lastTimeTick;
+    public int coins= 0;
     public CameraManager cameramn;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private GameObject bullets;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -33,7 +42,10 @@ public class MainChar : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         else
+        {
             Destroy(gameObject);
+            Debug.Log("Duplicate MainChar Destroyed!");
+        }
     }
     private void Move()
     {
@@ -58,47 +70,42 @@ public class MainChar : MonoBehaviour
             return;
         rb.velocity = new Vector2(rb.velocity.x, movesize * moveSpeed);
     }
-    private  void Jump()
+
+    private void Jump()
     {
+        if (isGrounded)
+            jumpCount = 0;
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 1)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpCount++;
         }
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
-    private void OnCollisionStay2D(Collision2D collision)
+    private void Attack()
     {
-        //foreach (ContactPoint2D contact in collision.contacts)
-        //{
-        //    Chỉ xét va chạm từ phía dưới
-        //    if (contact.normal.y > 0.5f)
-        //    {
-        //        if (collision.gameObject.CompareTag("Ground"))
-        //        {
-        //            isGrounded = true;
-        //            jumpCount = 0;
-        //            Debug.Log("Chạm đất!");
-        //        }
-        //    }
-        //}
-        if (collision.gameObject.CompareTag("Ground"))
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            isGrounded = true;
-            jumpCount = 0;// Debug.Log("Chạm đất!");
+            GameObject gameObjects = Instantiate(bullets, transform.position, Quaternion.identity);
+            Rigidbody2D rb = gameObjects.GetComponent<Rigidbody2D>();
+            float localScaleX = sr.flipX ? -1 : 1;
+            rb.velocity = new Vector2(localScaleX * bulletSpeed, 0);
         }
+    }
+    public static long currentTimeMillis()
+    {
+        DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        return (DateTime.UtcNow.Ticks - dateTime.Ticks) / 10000;
     }
     
-    private void OnCollisionExit2D(Collision2D collision)
+    private void Update()
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
+        Attack();
+        Jump();
+        Move();
     }
     void FixedUpdate()
     {
         Row();
-        Move();
-        Jump();
     }
 }

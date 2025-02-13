@@ -12,6 +12,9 @@ TagManager:
   - blackscr
   - NextMap
   - ladder
+  - Mobs
+  - Coin
+  - Bullets
   layers:
   - Default
   - TransparentFX
@@ -19,7 +22,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Ground
   - 
   - 
   - 
@@ -48,4 +51,25 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 327198707
+    locked: 0
+  - name: Ground
+    uniqueID: 786970471
+    locked: 0
+  - name: Traps
+    uniqueID: 196803413
+    locked: 0
+  - name: Ladders
+    uniqueID: 4113220005
+    locked: 0
+  - name: NextMap
+    uniqueID: 2240575405
+    locked: 0
+  - name: ItemMap
+    uniqueID: 3172709881
+    locked: 0
+  - name: MainChar
+    uniqueID: 2550179429
     locked: 0

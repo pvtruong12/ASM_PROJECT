@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Traps : MonoBehaviour
+public class MapCheck : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("myCharz"))
+        if(collision.CompareTag("Bullets"))
         {
-            MainChar.instance.isDie = true;
+            Destroy(collision.gameObject);
         }
     }
 }
