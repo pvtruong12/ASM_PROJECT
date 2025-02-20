@@ -1,48 +1,63 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Linq;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class LoginHandles : MonoBehaviour
 {
     public GameObject mainMenu;
     public List<GameObject> listButon;
-    private MainChar mainChar;
-    void Start()
+    private List<string> listName;
+    public TMP_InputField inputField;  
+    public Text resultText;
+    public GameObject CreatCharScr;
+    public void Awake()
     {
-        Init();
-    }
-    private void Init()
-    {
-        string path = Application.persistentDataPath + "/myInfo.json";
-        if(!File.Exists(path))
+        string a = PlayerPrefs.GetString("cName.txt");
+        if (File.Exists(GameManager.PathFile("listName.txt")))
+            listName = File.ReadAllLines(GameManager.PathFile("listName.txt")).Where(x => !string.IsNullOrEmpty(x)).ToList();
+        else
+            listName = new List<string>();
+        if (!string.IsNullOrEmpty(a))
         {
-            listButon[1].SetActive(false);
-            return;
+            GameManager.name = a;
+        }
+        
+    }
+    public void Start()
+    {
+        BtnChoiMoi.instance = this;
+        if (GameManager.name == "")
+        {
+            listButon.ElementAt(1).SetActive(false);
+        }
+    }
+    public void LoadCreatChar()
+    {
+        CreatCharScr.SetActive(true);
+        mainMenu.SetActive(false);
+    }
+    public void CheckName() => StartCoroutine(CheckNames());
+    IEnumerator CheckNames()
+    {
+        yield return 1f;
+        string name = inputField.text;
+        if (listName.Count <= 0 || (listName.Last() != name && !string.IsNullOrEmpty(name) && !name.Contains(" ")))
+        {
+            PlayerPrefs.SetString("cName.txt", name);
+            File.AppendAllText(GameManager.PathFile("listName.txt"), name+"\n");
+            GameManager.name = name;
+            SceneManager.LoadScene(GameManager.listLevel[0]);
         }
         else
         {
-            mainChar = null;
-            try
-            {
-                mainChar = JsonUtility.FromJson<MainChar>(File.ReadAllText(path));
-            }
-            catch(Exception ex)
-            {
-                listButon[1].SetActive(false);
-                Debug.Log(ex);
-            }
+            inputField.text = "Vui lòng nhâp lại tên";
         }
-    }
-    public void BtnChoiMoi()
-    {
-        SceneManager.LoadScene(MainChar.listLevel[mainChar.currentLevel]);
-    }
-    public void BtnContinue()
-    {
-        SceneManager.LoadScene(MainChar.listLevel[mainChar.currentLevel]);
+
     }
 }

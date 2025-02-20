@@ -4,8 +4,18 @@ using UnityEngine;
 
 public class GUIManager : MonoBehaviour
 {
-    void Start()
+    public static GUIManager instance;
+
+    void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject); 
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

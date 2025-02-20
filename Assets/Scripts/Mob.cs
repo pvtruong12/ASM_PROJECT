@@ -8,22 +8,35 @@ public class Mob : MonoBehaviour
     private Vector3 localPossion;
     public float sizeMove= 5f;
     public float moveSpeed= 3f;
-    public float speedVienDan= 10f;
+    public float speedVienDan= 5f;
     private bool isMoveRight = true;
     private long lastTimeAttack;
-    public GameObject prefabsVenDan2;
     private bool isCanAttack = false;
+    private int [] levelMob = new int[3] {0, 1, 2 };
+    public int mobHP =-1;
     void Start()
     {
         localPossion = transform.position;
     }
 
-    void Update()
+    public void update()
     {
-
+        if(mobHP==-1)
+        {
+            mobHP = levelMob[GameManager.instance.currentLevel];
+        }
         Attack();
         MoveMob();
+    }
 
+    public void TakeDameMob(int dame)
+    {
+        mobHP -= dame;
+        if (mobHP == 0)
+        {
+            GameObject game = ItemMapManager.instance.GetCoin(transform.position);
+            Destroy(gameObject);
+        }
     }
     void Attack()
     {
@@ -33,7 +46,7 @@ public class Mob : MonoBehaviour
         if(size <= 5f && mPosion.y  <= vectorChar.y)
         {
             isCanAttack = true;
-            if (MainChar.currentTimeMillis() - lastTimeAttack >=1500)
+            if (MainChar.currentTimeMillis() - lastTimeAttack >=3000)
             {
                 lastTimeAttack = MainChar.currentTimeMillis();
                 if (vectorChar.x > transform.position.x && transform.localScale.x < 0)
@@ -45,7 +58,13 @@ public class Mob : MonoBehaviour
                     FlipX(); 
                 }
                 Vector3 vector = (vectorChar - transform.position).normalized;
-                GameObject viendans = Instantiate(prefabsVenDan2, transform.position, Quaternion.identity);
+                GameObject viendans = BulletManagers.instance.GetBullets();
+                if (viendans == null)
+                    return;
+
+                viendans.transform.position = transform.position;
+                viendans.GetComponent<Bullets>().who = "Mob";
+                viendans.transform.position = transform.position;
                 viendans.GetComponent<SpriteRenderer>().color = Color.blue;
                 Rigidbody2D rb = viendans.GetComponent<Rigidbody2D>();
                 rb.velocity =vector * speedVienDan;
@@ -54,13 +73,6 @@ public class Mob : MonoBehaviour
             return;
         }
         isCanAttack = false;
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Bullets"))
-        {
-            Destroy(gameObject);
-        }
     }
     void MoveMob()
     {

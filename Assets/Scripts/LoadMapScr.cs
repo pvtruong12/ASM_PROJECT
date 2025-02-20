@@ -7,11 +7,10 @@ public class LoadMapScr : MonoBehaviour
     public static LoadMapScr instance;
     void Start()
     {
-        StartCoroutine(HideAfterDelay(2f));
+        StartCoroutine(HideAfterDelay());
     }
     private void Awake()
     {
-        Debug.Log("Created LoadMap");
         if (instance == null)
         {
             instance = this;
@@ -23,19 +22,28 @@ public class LoadMapScr : MonoBehaviour
     public void ShowLoading()
     {
         gameObject.SetActive(true);
-        StartCoroutine(HideAfterDelay(2f));
+        StartCoroutine(HideAfterDelay());
     }
-    public IEnumerator HideAfterDelay(float delay)
+    public IEnumerator HideAfterDelay()
     {
-        yield return new WaitForSeconds(delay);
-        GameObject bounds = GameObject.FindWithTag("repoint");
-        if (bounds != null && MainChar.instance != null)
-        {
-            MainChar.instance.transform.position = bounds.transform.position;
-            MainChar.instance.jumpCount = 0;
-            MainChar.instance.cameramn.UpdateConfiner();
-        }
+        yield return new WaitForSeconds(1f);
 
         gameObject.SetActive(false);
+        if (MainChar.instance != null)
+        {
+            MainChar.instance.jumpCount = 0;
+            MainChar.instance.cameramn.UpdateConfiner();
+            MainChar.instance.isDie = false;
+            MainChar.instance.transform.position = GameManager.instance.reponPossition();
+            GameManager.instance.Intit();
+        }
+
+
     }
+    //public void WaitresetPoint() => StartCoroutine(HideAfterDelay2());
+    //public IEnumerator HideAfterDelay2()
+    //{
+    //    yield return new WaitForSeconds(2f);
+    //    MainChar.instance.transform.position = GameManager.instance.reponPossition();
+    //}
 }

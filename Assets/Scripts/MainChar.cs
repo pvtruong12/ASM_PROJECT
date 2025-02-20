@@ -3,31 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using TMPro;
 
 public class MainChar : MonoBehaviour
 {
-    public float moveSpeed = 2f;
     public static MainChar instance;
-    public static string[] listLevel = new string[] { "LoginScr", "CreatChar","Level_1", "Level_2", "Level_3" };
-    public int currentLevel = 1;
     public Rigidbody2D rb;
     private SpriteRenderer sr;
     private Animator amn;
     [SerializeField] private float jumpForce = 10f; 
-    public float bulletSpeed = 10f; 
     public int jumpCount = 0;
-    public bool isDie = false;
     private bool isGrounded;
     public bool isLadder;
     public long lastTimeTick;
-    public int coins= 0;
+    public int currentCoin = 0;
+    public bool isDie = false;
     public CameraManager cameramn;
+    private TextMeshProUGUI textName;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
-    [SerializeField] private GameObject bullets;
 
     void Start()
     {
+        textName = GetComponentInChildren<TextMeshProUGUI>();
+        textName.text = GameManager.name;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponentInChildren<SpriteRenderer>();
         amn = GetComponent<Animator>();
@@ -50,7 +49,7 @@ public class MainChar : MonoBehaviour
     private void Move()
     {
         float movesize = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(movesize * moveSpeed, rb.velocity.y);
+        rb.velocity = new Vector2(movesize * GameManager.instance.moveSpeed, rb.velocity.y);
         amn.SetBool("isMove", movesize != 0 && isGrounded);
         amn.SetBool("isJump", !isGrounded && !isLadder);
         if(movesize > 0)
@@ -61,14 +60,14 @@ public class MainChar : MonoBehaviour
             sr.flipX = true;
         }
     }
-    private void Row()
+    public void Row()
     {
 
         float movesize = Input.GetAxisRaw("Vertical");
         amn.SetBool("isRow", movesize != 0);
         if (!isLadder)
             return;
-        rb.velocity = new Vector2(rb.velocity.x, movesize * moveSpeed);
+        rb.velocity = new Vector2(rb.velocity.x, movesize * GameManager.instance.moveSpeed);
     }
 
     private void Jump()
@@ -86,10 +85,14 @@ public class MainChar : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            GameObject gameObjects = Instantiate(bullets, transform.position, Quaternion.identity);
+            amn.SetTrigger("isAttack");
+            GameObject gameObjects = BulletManagers.instance.GetBullets();
+            gameObjects.GetComponent<Bullets>().who = "Char";
+            gameObjects.transform.position = transform.position;
+            gameObjects.GetComponent<SpriteRenderer>().color = Color.red;
             Rigidbody2D rb = gameObjects.GetComponent<Rigidbody2D>();
             float localScaleX = sr.flipX ? -1 : 1;
-            rb.velocity = new Vector2(localScaleX * bulletSpeed, 0);
+            rb.velocity = new Vector2(localScaleX * GameManager.instance.bulletSpeed, 0);
         }
     }
     public static long currentTimeMillis()
@@ -98,14 +101,10 @@ public class MainChar : MonoBehaviour
         return (DateTime.UtcNow.Ticks - dateTime.Ticks) / 10000;
     }
     
-    private void Update()
+    public void update()
     {
         Attack();
         Jump();
         Move();
-    }
-    void FixedUpdate()
-    {
-        Row();
     }
 }

@@ -15,6 +15,7 @@ TagManager:
   - Mobs
   - Coin
   - Bullets
+  - hearth
   layers:
   - Default
   - TransparentFX
@@ -23,9 +24,9 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
-  - 
+  - Player
+  - Mob
+  - Bullet
   - 
   - 
   - 
@@ -72,4 +73,7 @@ TagManager:
     locked: 0
   - name: MainChar
     uniqueID: 2550179429
+    locked: 0
+  - name: Mobs
+    uniqueID: 2247753623
     locked: 0

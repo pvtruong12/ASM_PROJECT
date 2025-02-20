@@ -6,10 +6,16 @@ public class MainCharCollisson : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if ((collision.CompareTag("Mobs") || collision.CompareTag("Traps")  || collision.CompareTag("Bullets")) && !MainChar.instance.isDie)
+        if ((collision.CompareTag("Mobs") || collision.CompareTag("Traps")) && !MainChar.instance.isDie)
         {
             MainChar.instance.isDie = true;
-            HealthManager.health--;
+            GameManager.instance.health--;
+            if(GameManager.instance.health <= 0)
+            {
+                GameManager.instance.SetPanelWinOrLose(false);
+                return;
+            }
+            GameManager.instance.MeDead();
         }
         else if (collision.CompareTag("ladder"))
         {
@@ -19,6 +25,10 @@ public class MainCharCollisson : MonoBehaviour
         else if(collision.CompareTag("Coin"))
         {
             GameManager.instance.AddCoins(1);
+            ItemMapManager.instance.ReturnCoin(collision.gameObject);
+        }else if(collision.CompareTag("hearth"))
+        {
+            GameManager.instance.AddHearth(1);
             Destroy(collision.gameObject);
         }
     }

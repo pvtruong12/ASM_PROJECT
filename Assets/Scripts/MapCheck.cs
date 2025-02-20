@@ -8,7 +8,7 @@ public class MapCheck : MonoBehaviour
     {
         if(collision.CompareTag("Bullets"))
         {
-            Destroy(collision.gameObject);
+            BulletManagers.instance.ReturnBullet(collision.gameObject);
         }
     }
 }
