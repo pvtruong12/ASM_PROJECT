@@ -11,6 +11,7 @@ public class BtnMenu : BaseButton
     }
     void ResetGame()
     {
+        SoundManages.instance.Play("click");
         GameObject[] dontDestroyObjects = FindObjectsOfType<GameObject>();
         foreach (var obj in dontDestroyObjects)
         {

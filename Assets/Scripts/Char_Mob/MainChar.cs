@@ -26,7 +26,7 @@ public class MainChar : MonoBehaviour
     void Start()
     {
         textName = GetComponentInChildren<TextMeshProUGUI>();
-        textName.text = GameManager.name;
+        textName.text = GameManager.Username.Name;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponentInChildren<SpriteRenderer>();
         amn = GetComponent<Animator>();
@@ -46,7 +46,7 @@ public class MainChar : MonoBehaviour
             Debug.Log("Duplicate MainChar Destroyed!");
         }
     }
-    private void Move()
+    public void Move()
     {
         float movesize = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(movesize * GameManager.instance.moveSpeed, rb.velocity.y);
@@ -62,7 +62,6 @@ public class MainChar : MonoBehaviour
     }
     public void Row()
     {
-
         float movesize = Input.GetAxisRaw("Vertical");
         amn.SetBool("isRow", movesize != 0);
         if (!isLadder)
@@ -70,21 +69,23 @@ public class MainChar : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, movesize * GameManager.instance.moveSpeed);
     }
 
-    private void Jump()
+    public void Jump()
     {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
         if (isGrounded)
             jumpCount = 0;
         if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 1)
         {
+            SoundManages.instance.Play("jump");
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpCount++;
         }
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
     private void Attack()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
+
             amn.SetTrigger("isAttack");
             GameObject gameObjects = BulletManagers.instance.GetBullets();
             gameObjects.GetComponent<Bullets>().who = "Char";
@@ -93,6 +94,7 @@ public class MainChar : MonoBehaviour
             Rigidbody2D rb = gameObjects.GetComponent<Rigidbody2D>();
             float localScaleX = sr.flipX ? -1 : 1;
             rb.velocity = new Vector2(localScaleX * GameManager.instance.bulletSpeed, 0);
+            SoundManages.instance.Play("attack");
         }
     }
     public static long currentTimeMillis()
@@ -105,6 +107,5 @@ public class MainChar : MonoBehaviour
     {
         Attack();
         Jump();
-        Move();
     }
 }

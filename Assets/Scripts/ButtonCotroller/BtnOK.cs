@@ -5,7 +5,8 @@ using UnityEngine;
 public class BtnOK : BaseButton
 {
     protected override void OnClick()
-    {
-        BtnChoiMoi.instance.CheckName();
+    { 
+            SoundManages.instance.Play("click");
+        LoginHandles.instance.CheckName();
     }
 }

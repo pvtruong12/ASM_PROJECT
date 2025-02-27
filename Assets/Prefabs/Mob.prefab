@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5440192181769017233}
   - component: {fileID: 7855839343505540648}
   - component: {fileID: 7855839343505540649}
+  - component: {fileID: -3196778075238647834}
   m_Layer: 8
   m_Name: Mob
   m_TagString: Mobs
@@ -101,7 +102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sizeMove: 2
   moveSpeed: 3
-  speedVienDan: 10
+  speedVienDan: 4
   mobHP: 0
 --- !u!61 &7855839343505540648
 BoxCollider2D:
@@ -150,3 +151,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!95 &-3196778075238647834
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7855839343505540650}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 58e2badef9487a542820c591e7c8e87b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

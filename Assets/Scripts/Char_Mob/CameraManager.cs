@@ -40,6 +40,7 @@ public class CameraManager : MonoBehaviour
         {
             confiner.m_BoundingShape2D = bounds.GetComponent<Collider2D>();
             confiner.InvalidateCache();
+            EnsureCinemachineBrain();
         }
     }
 }

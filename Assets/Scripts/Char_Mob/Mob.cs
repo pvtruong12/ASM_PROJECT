@@ -8,7 +8,7 @@ public class Mob : MonoBehaviour
     private Vector3 localPossion;
     public float sizeMove= 5f;
     public float moveSpeed= 3f;
-    public float speedVienDan= 5f;
+    public float speedVienDan= 3f;
     private bool isMoveRight = true;
     private long lastTimeAttack;
     private bool isCanAttack = false;
@@ -42,19 +42,21 @@ public class Mob : MonoBehaviour
     {
         Vector3 vectorChar = MainChar.instance.gameObject.transform.position;
         Vector3 mPosion = transform.position;
+        int capdo = levelMob[GameManager.instance.currentLevel];
         float size = Vector3.Distance(vectorChar, mPosion);
-        if(size <= 5f && mPosion.y  <= vectorChar.y)
-        {
-            isCanAttack = true;
+        if(size <= 5f* capdo && mPosion.y  <= vectorChar.y)
+        { 
             if (MainChar.currentTimeMillis() - lastTimeAttack >=3000)
             {
                 lastTimeAttack = MainChar.currentTimeMillis();
                 if (vectorChar.x > transform.position.x && transform.localScale.x < 0)
                 {
+                    isMoveRight = true;
                     FlipX();
                 }
                 else if (vectorChar.x < transform.position.x && transform.localScale.x > 0)
                 {
+                    isMoveRight = false;
                     FlipX(); 
                 }
                 Vector3 vector = (vectorChar - transform.position).normalized;
@@ -68,6 +70,7 @@ public class Mob : MonoBehaviour
                 viendans.GetComponent<SpriteRenderer>().color = Color.blue;
                 Rigidbody2D rb = viendans.GetComponent<Rigidbody2D>();
                 rb.velocity =vector * speedVienDan;
+                SoundManages.instance.Play("attack");
             }
             isCanAttack = true;
             return;

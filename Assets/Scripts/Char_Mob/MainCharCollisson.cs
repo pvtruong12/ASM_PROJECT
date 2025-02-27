@@ -24,12 +24,19 @@ public class MainCharCollisson : MonoBehaviour
         }
         else if(collision.CompareTag("Coin"))
         {
+            if (MainChar.instance.isDie)
+                return;
             GameManager.instance.AddCoins(1);
             ItemMapManager.instance.ReturnCoin(collision.gameObject);
-        }else if(collision.CompareTag("hearth"))
+            SoundManages.instance.Play("pick");
+        }
+        else if(collision.CompareTag("hearth"))
         {
+            if (MainChar.instance.isDie)
+                return;
             GameManager.instance.AddHearth(1);
             Destroy(collision.gameObject);
+            SoundManages.instance.Play("pick");
         }
     }
     private void OnTriggerExit2D(Collider2D collision)

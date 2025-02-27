@@ -10,7 +10,7 @@ using System.IO;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public static string name = "";
+    public static LoginHandles.Username Username;
     public GameObject panelWinOrLose;
     public WayPoint waypoins;
     public TextMeshProUGUI textScore;
@@ -53,17 +53,13 @@ public class GameManager : MonoBehaviour
 
     public void DemGiay()
     {
-        if(health <= 0)
-        {
-            return;
-        }
+        if (health <= 0) return;
         if (Time.time - lastTimeUpdateTime >= 1f)
         {
             lastTimeUpdateTime = (long)Time.time;
             timeElapsed++;
             textTimeCountUp.text = $"Tiến độ Win: {timeElapsed}";
         }
-
     }
     public void ResetChar()
     {
@@ -75,6 +71,7 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         Intit();
+        
     }
     public void Instance(WayPoint wps)
     {
@@ -103,6 +100,14 @@ public class GameManager : MonoBehaviour
         Action Actions = new Action(delegate () {
             
         });
+        foreach(GameObject game in BulletManagers.instance.gameobjects)
+        {
+            BulletManagers.instance.ReturnBullet(game);
+        }
+        foreach(GameObject game in ItemMapManager.instance.listCoin)
+        {
+            ItemMapManager.instance.ReturnCoin(game);
+        }
         waypoins.LoadMapLevel(currentLevel, Actions);
     }
     public void SetPanelWinOrLose(bool isWin)
@@ -119,10 +124,12 @@ public class GameManager : MonoBehaviour
         else
         {
             listButtonWinLose.ElementAt(0).SetActive(true);
-            textLogoWinOrLose.text = "You Win";
+            textLogoWinOrLose.text = $"{Username.Name} đã WIN với số điểm {coins} trong  {timeElapsed}s";
+
         }
         Time.timeScale = 0;
         SaveCore();
+        SoundManages.instance.Play(isWin ? "nextmap":"gameover");
     }
     public void Intit()
     {
@@ -140,20 +147,24 @@ public class GameManager : MonoBehaviour
                 listMobInMap[i].update();
         }
         DemGiay();
-        HealthUpdate();
         DrawFPS();
     }
+    private float lastUpdateFPS = 0;
     private void DrawFPS()
     {
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-        int fps = (int)(1.0f / deltaTime);
-        textFPS.text = $"FPS: {fps}";
+        if (Time.time - lastUpdateFPS >= 0.5f)
+        {
+            lastUpdateFPS = Time.time;
+            int fps = (int)(1.0f / deltaTime);
+            textFPS.text = $"FPS: {fps}";
+        }
     }
     public void SaveCore()
     {
         if(coins > 0)
         {
-            File.AppendAllText(PathFile("coins.txt"),name+"|"+ coins+"|"+timeElapsed+"\n");
+            File.AppendAllText(PathFile("coins.txt"),Username.Name+"|"+ coins+"|"+timeElapsed+"\n");
             timeElapsed = 0;
             coins = 0;
         }
@@ -178,10 +189,12 @@ public class GameManager : MonoBehaviour
         if (health >= 3)
             return;
         health += num;
+        HealthUpdate();
     }
     public void FixedUpdate()
     {
         MainChar.instance.Row();
+        MainChar.instance.Move();
     }
 
 }

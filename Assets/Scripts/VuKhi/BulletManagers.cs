@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Newtonsoft.Json;
 public class BulletManagers : MonoBehaviour
 {
     public static BulletManagers instance;
     public long bulletCount = 10;
     public GameObject prefabBullets;
-    private Queue<GameObject> gameobjects = new Queue<GameObject>();
+    public Queue<GameObject> gameobjects = new Queue<GameObject>();
     public Vector3 possitions;
 
     private void Awake()
